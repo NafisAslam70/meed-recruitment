@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: teacher-recruitment-app
+    name: meed-recruitment
     env: python
     plan: free  # Adjust based on your Render plan
     buildCommand: |
@@ -12,4 +12,6 @@ services:
       - key: PYTHON_VERSION
         value: 3.12
       - key: SECRET_KEY
-        value: your-secret-key  # Replace with a secure key
+        value: your-secret-key  # Generate a secure key (e.g., python -c "import os; print(os.urandom(24).hex())")
+      - key: QUIKR_SESSION_COOKIE
+        value: your_quikr_session_cookie  # Replace with actual Quikr cookie or leave as placeholder

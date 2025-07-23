@@ -10435,3 +10435,16 @@
 2025-07-24 07:15:39,151 INFO:  * Restarting with watchdog (fsevents)
 2025-07-24 07:31:08,608 WARNING:  * Debugger is active!
 2025-07-24 07:31:08,624 INFO:  * Debugger PIN: 178-652-382
+2025-07-24 07:32:32,596 INFO: 127.0.0.1 - - [24/Jul/2025 07:32:32] "POST / HTTP/1.1" 200 -
+2025-07-24 07:32:32,645 INFO: 127.0.0.1 - - [24/Jul/2025 07:32:32] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 07:32:44,507 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 07:32:44,559 INFO: Extracted name using spaCy: +8158093395
+2025-07-24 07:32:44,564 INFO: Extracted email: palmudolma09@icloud.com
+2025-07-24 07:32:44,564 INFO: Extracted phone: +918158093395
+2025-07-24 07:32:44,566 INFO: 127.0.0.1 - - [24/Jul/2025 07:32:44] "POST / HTTP/1.1" 200 -
+2025-07-24 07:32:44,582 INFO: 127.0.0.1 - - [24/Jul/2025 07:32:44] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 07:32:44,607 INFO: 127.0.0.1 - - [24/Jul/2025 07:32:44] "GET /Uploads/Resume_Palmu_Dolma_Lama.pdf HTTP/1.1" 200 -
+2025-07-24 07:35:29,787 INFO:  * Detected change in '/Users/nafisaslam/Desktop/buildApps/SOCIETY/teacher-recruitment-app2/app.py', reloading
+2025-07-24 07:35:34,435 INFO: Successfully loaded spaCy model 'en_core_web_sm'
+2025-07-24 07:35:34,488 WARNING:  * Debugger is active!
+2025-07-24 07:35:34,506 INFO:  * Debugger PIN: 178-652-382

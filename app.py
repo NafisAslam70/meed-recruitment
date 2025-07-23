@@ -18,7 +18,8 @@ import logging
 logging.basicConfig(
     level=logging.INFO,
     filename='app.log',
-    format='%(asctime)s %(levelname)s: %(message)s'
+    format='%(asctime)s %(levelname)s: %(message)s',
+    filemode='a'
 )
 
 app = Flask(__name__)
@@ -26,6 +27,7 @@ app = Flask(__name__)
 # Load spaCy model with error handling
 try:
     nlp = spacy.load('en_core_web_sm')
+    logging.info("Successfully loaded spaCy model 'en_core_web_sm'")
 except OSError as e:
     logging.error(f"Failed to load spaCy model: {str(e)}. Falling back to regex-only name extraction.")
     nlp = None
@@ -47,10 +49,10 @@ YOUR_WHATSAPP_NUMBER = '+601112079684'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Hardcoded credentials (consider moving to environment variables for production)
+# Hardcoded credentials (move to env vars in production)
 HARDCODED_CREDENTIALS = {
-    'username': 'admin',
-    'password': 'password123'
+    'username': os.environ.get('ADMIN_USERNAME', 'admin'),
+    'password': os.environ.get('ADMIN_PASSWORD', 'password123')
 }
 
 def allowed_file(filename):
@@ -60,7 +62,9 @@ def normalize_phone_number(number):
     try:
         parsed_number = phonenumbers.parse(number, 'IN')
         if phonenumbers.is_valid_number(parsed_number):
-            return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
+            normalized = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
+            logging.info(f"Normalized phone number: {normalized}")
+            return normalized
     except phonenumbers.NumberParseException as e:
         logging.error(f"Phone number parsing failed: {str(e)}")
         return None
@@ -168,6 +172,7 @@ def extract_info(file_path):
 def generate_message(name):
     if not name:
         name = "Applicant"
+        logging.info("Using default name 'Applicant' for message generation")
     return (
         f"Dear {name},\n\n"
         f"We’re hiring at MEED Public School, a well-reputed institution near New Farakka!\n\n"
@@ -230,6 +235,7 @@ def scrape_teaching_jobs():
             }
             candidates.append(candidate)
         
+        logging.info(f"Scraped {len(candidates)} candidates from Quikr")
         return candidates
     except Exception as e:
         logging.error(f"Error scraping jobs: {str(e)}")
@@ -247,9 +253,11 @@ def login():
         if (username == HARDCODED_CREDENTIALS['username'] and 
             password == HARDCODED_CREDENTIALS['password']):
             session['logged_in'] = True
+            logging.info(f"User logged in: {username}")
             return redirect(url_for('index'))
         else:
             error = 'Invalid username or password'
+            logging.warning(f"Failed login attempt: username={username}")
             return render_template('login.html', error=error)
     
     return render_template('login.html', error='')
@@ -257,6 +265,7 @@ def login():
 @app.route('/find-teachers')
 def find_teachers():
     if not session.get('logged_in'):
+        logging.info("Redirecting unauthenticated user to login from /find-teachers")
         return redirect(url_for('login'))
     
     candidates = scrape_teaching_jobs()
@@ -265,6 +274,7 @@ def find_teachers():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('logged_in'):
+        logging.info("Redirecting unauthenticated user to login from /")
         return redirect(url_for('login'))
     
     message = ''
@@ -287,11 +297,13 @@ def index():
             
             if file.filename == '':
                 error = 'No file selected'
+                logging.warning("No file selected for PDF upload")
             elif file and allowed_file(file.filename):
                 file.seek(0, os.SEEK_END)
                 file_size = file.tell()
                 if file_size > MAX_FILE_SIZE:
                     error = 'File size exceeds 10MB limit'
+                    logging.warning(f"File size exceeds limit: {file_size} bytes")
                 else:
                     file.seek(0)
                     filename = secure_filename(file.filename)
@@ -300,6 +312,7 @@ def index():
                     try:
                         file.save(filepath)
                         pdf_path = f"/Uploads/{filename}"
+                        logging.info(f"Saved PDF: {filename}")
                         fetched_name, fetched_email, fetched_phone = extract_info(filepath)
                         name = fetched_name
                         email = fetched_email
@@ -307,6 +320,7 @@ def index():
                         message = generate_message(name)
                         if not (name or email or phone):
                             error = 'Could not extract details from PDF. Please enter manually.'
+                            logging.warning("No details extracted from PDF")
                     except Exception as e:
                         logging.error(f"PDF processing error: {str(e)}")
                         error = 'Failed to process PDF. Please ensure it is a valid, readable PDF or enter details manually.'
@@ -322,12 +336,15 @@ def index():
                 whatsapp_number = normalize_phone_number(phone) if phone else None
                 if whatsapp_number:
                     contact_link = f"https://wa.me/{whatsapp_number}?text={quote(message)}"
+                    logging.info(f"Generated WhatsApp link for phone: {whatsapp_number}")
                 else:
                     error = 'No valid phone number provided' if phone else 'No phone number provided'
+                    logging.warning(f"Invalid or missing phone number: {phone}")
                     contact_link = f"mailto:mymeedpss@gmail.com?subject=Job%20Application%20-%20{name}&body=Please%20attach%20your%20CV"
         
         else:
             error = 'No valid input provided'
+            logging.warning("No valid input provided in POST request")
         
         return render_template('index.html', error=error, message=message, pdf_path=pdf_path, 
                              whatsapp_number=whatsapp_number, contact_link=contact_link, source=source,
@@ -342,17 +359,21 @@ def index():
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
+    logging.info("User logged out")
     return redirect(url_for('login'))
 
 @app.route('/Uploads/<filename>')
 def serve_uploaded_file(filename):
     if not session.get('logged_in'):
+        logging.info("Redirecting unauthenticated user to login from /Uploads")
         return redirect(url_for('login'))
+    logging.info(f"Serving file: {filename}")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/cleanup', methods=['GET'])
 def cleanup():
     if not session.get('logged_in'):
+        logging.info("Redirecting unauthenticated user to login from /cleanup")
         return redirect(url_for('login'))
     file_path = request.args.get('file')
     if file_path:
@@ -361,6 +382,8 @@ def cleanup():
             if os.path.exists(full_path):
                 os.remove(full_path)
                 logging.info(f"Deleted file: {full_path}")
+            else:
+                logging.warning(f"File not found for deletion: {full_path}")
         except Exception as e:
             logging.error(f"Failed to delete file: {str(e)}")
     return jsonify({"status": "success"})
@@ -374,6 +397,7 @@ def debug_routes():
             'methods': list(rule.methods),
             'rule': str(rule)
         })
+    logging.info("Accessed debug-routes endpoint")
     return jsonify(routes)
 
 if __name__ == '__main__':

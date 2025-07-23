@@ -28,6 +28,5 @@ pdf2image==1.17.0
 pytesseract==0.3.13
 phonenumbers==8.13.7
 spacy==3.8.7
-en-core-web-sm==3.8.7
 email-validator==2.2.0
 gunicorn==20.1.0
