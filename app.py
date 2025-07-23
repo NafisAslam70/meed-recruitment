@@ -2,11 +2,19 @@ from flask import Flask, request, render_template, jsonify, send_from_directory,
 import os
 import re
 from werkzeug.utils import secure_filename
-import PyPDF2
+import pdfplumber
+from pdf2image import convert_from_path
+import pytesseract
 from urllib.parse import quote
 from flask_session import Session
 import requests
 from bs4 import BeautifulSoup
+import spacy
+import phonenumbers
+from email_validator import validate_email, EmailNotValidError
+
+# Load spaCy model
+nlp = spacy.load('en_core_web_sm')
 
 app = Flask(__name__)
 
@@ -36,50 +44,90 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def normalize_phone_number(number):
-    number = re.sub(r'[-.\s]', '', number)
-    if not re.match(r'^\+?\d{10,12}$', number):
+    try:
+        parsed_number = phonenumbers.parse(number, 'IN')  # Assume India as default region
+        if phonenumbers.is_valid_number(parsed_number):
+            return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
+    except phonenumbers.NumberParseException:
         return None
-    return number if number.startswith('+') else f'+91{number}'
+    return None
 
-def extract_info(text):
-    # Robust name extraction
+def extract_info(file_path):
+    # Step 1: Check if PDF is scanned (image-based)
+    try:
+        images = convert_from_path(file_path, first_page=1, last_page=1)
+        if images:
+            text = pytesseract.image_to_string(images[0])
+        else:
+            # Step 2: Use pdfplumber for text-based PDFs
+            with pdfplumber.open(file_path) as pdf:
+                text = ''
+                for page in pdf.pages:
+                    text += page.extract_text() or ''
+    except Exception:
+        text = ''  # Fallback if conversion fails
+
+    # Step 3: Text normalization
+    text = re.sub(r'\s+', ' ', text).strip().lower()
+
+    # Step 4: Name extraction with NER and heuristics
     name = ''
-    name_patterns = [
-        r'Name\s*[:\-]?\s*([A-Za-z\s]+(?:[A-Za-z]\.)?)',  # Name: John Doe or Name: Mr. J. Doe
-        r'Full\s*Name\s*[:\-]?\s*([A-Za-z\s]+(?:[A-Za-z]\.)?)',  # Full Name: John Doe
-        r'^(?:Mr\.?|Ms\.?|Mrs\.?)\s*([A-Z][a-zA-Z]*\s+[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)'  # Mr. John Doe at start
-    ]
-    for pattern in name_patterns:
-        name_match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
-        if name_match:
-            words = name_match.group(1).split()
-            filtered_words = [word for word in words if not re.match(r'boond[A-Za-z]*|Teacher', word, re.IGNORECASE)]
-            name = ' '.join(filtered_words[:3])  # Limit to 3 words
-            if name.strip():
-                break
+    doc = nlp(text)
+    for ent in doc.ents:
+        if ent.label_ == 'PERSON' and len(ent.text.split()) <= 3:
+            name = ent.text.title()
+            break
     if not name:
-        # Fallback to capitalized words at start
+        name_patterns = [
+            r'Name\s*[:\-]?\s*([A-Za-z\s]+(?:[A-Za-z]\.)?)',
+            r'Full\s*Name\s*[:\-]?\s*([A-Za-z\s]+(?:[A-Za-z]\.)?)',
+            r'^(?:Mr\.?|Ms\.?|Mrs\.?)\s*([A-Z][a-zA-Z]*\s+[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)'
+        ]
+        for pattern in name_patterns:
+            name_match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+            if name_match:
+                words = name_match.group(1).split()
+                filtered_words = [word for word in words if not re.match(r'boond[A-Za-z]*|Teacher', word, re.IGNORECASE)]
+                name = ' '.join(filtered_words[:3]).title()
+                if name.strip():
+                    break
+    if not name:
         name_match = re.search(r'^([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*){1,2})', text, re.MULTILINE)
         if name_match:
-            name = name_match.group(1)
+            name = name_match.group(1).title()
 
-    # Robust email extraction
+    # Step 5: Email extraction with validation
     email = ''
     email_patterns = [
-        r'Email\s*[:\-]?\s*([\w\.-]+@[\w\.-]+\.\w{2,})',  # Email: name@domain.com
-        r'E-mail\s*[:\-]?\s*([\w\.-]+@[\w\.-]+\.\w{2,})',  # E-mail: name@domain.com
-        r'[\w\.-]+@[\w\.-]+\.\w{2,}(?=\s|$)'  # Standalone email (e.g., name@domain.com)
+        r'Email\s*[:\-]?\s*([\w\.-]+@[\w\.-]+\.\w{2,})',
+        r'E-mail\s*[:\-]?\s*([\w\.-]+@[\w\.-]+\.\w{2,})',
+        r'[\w\.-]+@[\w\.-]+\.\w{2,}(?=\s|$)'  # Standalone email
     ]
     for pattern in email_patterns:
         email_match = re.search(pattern, text, re.IGNORECASE)
-        if email_match and re.match(r'[\w\.-]+@[\w\.-]+\.\w{2,}', email_match.group(1)):
-            email = email_match.group(1).strip()
-            break
+        if not email_match:
+            continue  # Skip to next pattern if no match
 
-    # Extract phone number
+        try:
+            # Use group(1) if regex has a capture group, else group(0)
+            email_candidate = email_match.group(1) if email_match.lastindex else email_match.group(0)
+            email_candidate = email_candidate.strip()
+            validate_email(email_candidate, check_deliverability=False)
+            email = email_candidate
+            break
+        except (EmailNotValidError, IndexError):
+            continue
+    
+
+    # Step 6: Phone extraction with validation
+    phone = ''
     phone_pattern = r'\+?\d{1,3}[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{4}|\d{10}'
-    phone_numbers = re.findall(phone_pattern, text)[:1]  # Take the first phone number
-    phone = phone_numbers[0] if phone_numbers else ''
+    phone_numbers = re.findall(phone_pattern, text)
+    for number in phone_numbers:
+        normalized = normalize_phone_number(number)
+        if normalized:
+            phone = normalized
+            break
 
     return name, email, phone
 
@@ -217,13 +265,7 @@ def index():
                     file.save(filepath)
                     pdf_path = f"/Uploads/{filename}"
                     
-                    with open(filepath, 'rb') as f:
-                        pdf_reader = PyPDF2.PdfReader(f)
-                        text = ''
-                        for page in pdf_reader.pages:
-                            text += page.extract_text() or ''
-                    
-                    fetched_name, fetched_email, fetched_phone = extract_info(text)
+                    fetched_name, fetched_email, fetched_phone = extract_info(filepath)
                     name = fetched_name
                     email = fetched_email
                     phone = fetched_phone
