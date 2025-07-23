@@ -12,14 +12,26 @@ from bs4 import BeautifulSoup
 import spacy
 import phonenumbers
 from email_validator import validate_email, EmailNotValidError
+import logging
 
-# Load spaCy model
-nlp = spacy.load('en_core_web_sm')
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    filename='app.log',
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
 
 app = Flask(__name__)
 
+# Load spaCy model with error handling
+try:
+    nlp = spacy.load('en_core_web_sm')
+except OSError as e:
+    logging.error(f"Failed to load spaCy model: {str(e)}. Falling back to regex-only name extraction.")
+    nlp = None
+
 # Configure session
-app.config['SECRET_KEY'] = 'your-secret-key'  # Replace with a secure key in production
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key')
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'flask_session')
 Session(app)
@@ -28,13 +40,14 @@ Session(app)
 UPLOAD_FOLDER = 'Uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'pdf'}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 YOUR_WHATSAPP_NUMBER = '+601112079684'
 
 # Ensure upload directory exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Hardcoded credentials
+# Hardcoded credentials (consider moving to environment variables for production)
 HARDCODED_CREDENTIALS = {
     'username': 'admin',
     'password': 'password123'
@@ -45,43 +58,63 @@ def allowed_file(filename):
 
 def normalize_phone_number(number):
     try:
-        parsed_number = phonenumbers.parse(number, 'IN')  # Assume India as default region
+        parsed_number = phonenumbers.parse(number, 'IN')
         if phonenumbers.is_valid_number(parsed_number):
             return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
-    except phonenumbers.NumberParseException:
+    except phonenumbers.NumberParseException as e:
+        logging.error(f"Phone number parsing failed: {str(e)}")
         return None
     return None
 
 def extract_info(file_path):
+    text = ''
     # Step 1: Check if PDF is scanned (image-based)
     try:
         images = convert_from_path(file_path, first_page=1, last_page=1)
         if images:
             text = pytesseract.image_to_string(images[0])
-        else:
-            # Step 2: Use pdfplumber for text-based PDFs
+            logging.info("Extracted text from scanned PDF using OCR")
+    except Exception as e:
+        logging.error(f"OCR extraction failed: {str(e)}")
+
+    # Step 2: Use pdfplumber for text-based PDFs
+    if not text:
+        try:
             with pdfplumber.open(file_path) as pdf:
-                text = ''
                 for page in pdf.pages:
-                    text += page.extract_text() or ''
-    except Exception:
-        text = ''  # Fallback if conversion fails
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text + ' '
+            logging.info("Extracted text from PDF using pdfplumber")
+        except Exception as e:
+            logging.error(f"pdfplumber extraction failed: {str(e)}")
+
+    if not text.strip():
+        logging.warning("No text extracted from PDF")
+        return '', '', ''
 
     # Step 3: Text normalization
     text = re.sub(r'\s+', ' ', text).strip().lower()
 
-    # Step 4: Name extraction with NER and heuristics
+    # Step 4: Name extraction with NER (if available) or regex
     name = ''
-    doc = nlp(text)
-    for ent in doc.ents:
-        if ent.label_ == 'PERSON' and len(ent.text.split()) <= 3:
-            name = ent.text.title()
-            break
+    if nlp:
+        try:
+            doc = nlp(text)
+            for ent in doc.ents:
+                if ent.label_ == 'PERSON' and len(ent.text.split()) <= 3:
+                    name = ent.text.title()
+                    logging.info(f"Extracted name using spaCy: {name}")
+                    break
+        except Exception as e:
+            logging.error(f"spaCy NER failed: {str(e)}")
+
     if not name:
         name_patterns = [
             r'Name\s*[:\-]?\s*([A-Za-z\s]+(?:[A-Za-z]\.)?)',
             r'Full\s*Name\s*[:\-]?\s*([A-Za-z\s]+(?:[A-Za-z]\.)?)',
-            r'^(?:Mr\.?|Ms\.?|Mrs\.?)\s*([A-Z][a-zA-Z]*\s+[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)'
+            r'^(?:Mr\.?|Ms\.?|Mrs\.?)\s*([A-Z][a-zA-Z]*\s+[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)',
+            r'^([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*){1,2})'
         ]
         for pattern in name_patterns:
             name_match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
@@ -90,34 +123,34 @@ def extract_info(file_path):
                 filtered_words = [word for word in words if not re.match(r'boond[A-Za-z]*|Teacher', word, re.IGNORECASE)]
                 name = ' '.join(filtered_words[:3]).title()
                 if name.strip():
+                    logging.info(f"Extracted name using regex: {name}")
                     break
-    if not name:
-        name_match = re.search(r'^([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*){1,2})', text, re.MULTILINE)
-        if name_match:
-            name = name_match.group(1).title()
+        if not name:
+            name_match = re.search(r'^([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*){1,2})', text, re.MULTILINE)
+            if name_match:
+                name = name_match.group(1).title()
+                logging.info(f"Extracted fallback name using regex: {name}")
 
     # Step 5: Email extraction with validation
     email = ''
     email_patterns = [
         r'Email\s*[:\-]?\s*([\w\.-]+@[\w\.-]+\.\w{2,})',
         r'E-mail\s*[:\-]?\s*([\w\.-]+@[\w\.-]+\.\w{2,})',
-        r'[\w\.-]+@[\w\.-]+\.\w{2,}(?=\s|$)'  # Standalone email
+        r'[\w\.-]+@[\w\.-]+\.\w{2,}(?=\s|$)'
     ]
     for pattern in email_patterns:
         email_match = re.search(pattern, text, re.IGNORECASE)
         if not email_match:
-            continue  # Skip to next pattern if no match
-
+            continue
         try:
-            # Use group(1) if regex has a capture group, else group(0)
             email_candidate = email_match.group(1) if email_match.lastindex else email_match.group(0)
             email_candidate = email_candidate.strip()
             validate_email(email_candidate, check_deliverability=False)
             email = email_candidate
+            logging.info(f"Extracted email: {email}")
             break
-        except (EmailNotValidError, IndexError):
-            continue
-    
+        except (EmailNotValidError, IndexError) as e:
+            logging.error(f"Email validation failed: {str(e)}")
 
     # Step 6: Phone extraction with validation
     phone = ''
@@ -127,11 +160,14 @@ def extract_info(file_path):
         normalized = normalize_phone_number(number)
         if normalized:
             phone = normalized
+            logging.info(f"Extracted phone: {phone}")
             break
 
     return name, email, phone
 
 def generate_message(name):
+    if not name:
+        name = "Applicant"
     return (
         f"Dear {name},\n\n"
         f"We’re hiring at MEED Public School, a well-reputed institution near New Farakka!\n\n"
@@ -159,14 +195,14 @@ def scrape_teaching_jobs():
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5'
         }
-        session_cookie = "your_quikr_session_cookie"  # Replace with your actual Quikr session cookie
+        session_cookie = os.environ.get('QUIKR_SESSION_COOKIE', 'your_quikr_session_cookie')
         response = requests.get(url, headers=headers, cookies={'session': session_cookie})
         response.raise_for_status()
         
         soup = BeautifulSoup(response.text, 'html.parser')
         candidates = []
         
-        candidate_cards = soup.select('.shortlisted-candidate')  # Adjust selector based on actual HTML
+        candidate_cards = soup.select('.shortlisted-candidate')
         for card in candidate_cards[:10]:
             name_elem = card.select_one('.candidate-name')
             resume_elem = card.select_one('.download-resume')
@@ -196,7 +232,7 @@ def scrape_teaching_jobs():
         
         return candidates
     except Exception as e:
-        print(f"Error scraping jobs: {str(e)}")
+        logging.error(f"Error scraping jobs: {str(e)}")
         return [
             {'name': 'Sample Teacher JH', 'has_resume': True, 'contact': {'phone': '+919876543210', 'email': 'teacher.jh@example.com'}},
             {'name': 'Sample Teacher WB', 'has_resume': False, 'contact': {'phone': '+918765432109', 'email': 'teacher.wb@example.com'}}
@@ -245,36 +281,36 @@ def index():
     fetched_phone = ''
 
     if request.method == 'POST':
-        # Handle PDF upload
         if 'resume' in request.files:
             file = request.files['resume']
             source = 'pdf'
             
             if file.filename == '':
                 error = 'No file selected'
-                return render_template('index.html', error=error, message=message, pdf_path=pdf_path, 
-                                    whatsapp_number=whatsapp_number, contact_link=contact_link, source=source,
-                                    name=name, email=email, phone=phone,
-                                    fetched_name=fetched_name, fetched_email=fetched_email, fetched_phone=fetched_phone)
-            
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                
-                try:
-                    file.save(filepath)
-                    pdf_path = f"/Uploads/{filename}"
+            elif file and allowed_file(file.filename):
+                file.seek(0, os.SEEK_END)
+                file_size = file.tell()
+                if file_size > MAX_FILE_SIZE:
+                    error = 'File size exceeds 10MB limit'
+                else:
+                    file.seek(0)
+                    filename = secure_filename(file.filename)
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                     
-                    fetched_name, fetched_email, fetched_phone = extract_info(filepath)
-                    name = fetched_name
-                    email = fetched_email
-                    phone = fetched_phone
-                    message = generate_message(name)
-                    
-                except Exception as e:
-                    error = f"Failed to process PDF: {str(e)}"
+                    try:
+                        file.save(filepath)
+                        pdf_path = f"/Uploads/{filename}"
+                        fetched_name, fetched_email, fetched_phone = extract_info(filepath)
+                        name = fetched_name
+                        email = fetched_email
+                        phone = fetched_phone
+                        message = generate_message(name)
+                        if not (name or email or phone):
+                            error = 'Could not extract details from PDF. Please enter manually.'
+                    except Exception as e:
+                        logging.error(f"PDF processing error: {str(e)}")
+                        error = 'Failed to process PDF. Please ensure it is a valid, readable PDF or enter details manually.'
         
-        # Handle text input form
         elif 'name' in request.form:
             source = 'text'
             name = request.form.get('name', '')
@@ -292,10 +328,6 @@ def index():
         
         else:
             error = 'No valid input provided'
-            return render_template('index.html', error=error, message=message, pdf_path=pdf_path, 
-                                whatsapp_number=whatsapp_number, contact_link=contact_link, source=source,
-                                name=name, email=email, phone=phone,
-                                fetched_name=fetched_name, fetched_email=fetched_email, fetched_phone=fetched_phone)
         
         return render_template('index.html', error=error, message=message, pdf_path=pdf_path, 
                              whatsapp_number=whatsapp_number, contact_link=contact_link, source=source,
@@ -328,10 +360,22 @@ def cleanup():
         try:
             if os.path.exists(full_path):
                 os.remove(full_path)
+                logging.info(f"Deleted file: {full_path}")
         except Exception as e:
-            print(f"Failed to delete file: {str(e)}")
+            logging.error(f"Failed to delete file: {str(e)}")
     return jsonify({"status": "success"})
 
+@app.route('/debug-routes')
+def debug_routes():
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append({
+            'endpoint': rule.endpoint,
+            'methods': list(rule.methods),
+            'rule': str(rule)
+        })
+    return jsonify(routes)
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5700))
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=True)

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: teacher-recruitment-app
+    env: python
+    plan: free  # Adjust based on your Render plan
+    buildCommand: |
+      apt-get update && apt-get install -y poppler-utils tesseract-ocr
+      pip install -r requirements.txt
+      python -m spacy download en_core_web_sm
+    startCommand: gunicorn -w 4 -b 0.0.0.0:10000 app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12
+      - key: SECRET_KEY
+        value: your-secret-key  # Replace with a secure key

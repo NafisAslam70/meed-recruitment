@@ -10433,3 +10433,5 @@
 2025-07-24 07:15:00,422 INFO: 127.0.0.1 - - [24/Jul/2025 07:15:00] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
 2025-07-24 07:15:38,753 INFO:  * Detected change in '/Users/nafisaslam/Desktop/buildApps/SOCIETY/teacher-recruitment-app2/app.py', reloading
 2025-07-24 07:15:39,151 INFO:  * Restarting with watchdog (fsevents)
+2025-07-24 07:31:08,608 WARNING:  * Debugger is active!
+2025-07-24 07:31:08,624 INFO:  * Debugger PIN: 178-652-382
