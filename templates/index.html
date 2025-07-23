@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Recruitment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        function toggleForm(formId) {
+            document.getElementById('text-form').classList.add('hidden');
+            document.getElementById('pdf-form').classList.add('hidden');
+            document.getElementById(formId).classList.remove('hidden');
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <main class="p-6 max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6 text-center">Teacher Recruitment</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- General Message Card -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Vacancies Available</h2>
+                <p class="mb-4">We have openings at MEED Public School, Gumani, Pakur. Fooding and lodging are free. Please send us your details!</p>
+                <button
+                    onclick="toggleForm('text-form')"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Submit Details
+                </button>
+                <form id="text-form" method="post" class="space-y-4 mt-4 hidden">
+                    <textarea
+                        name="details"
+                        rows="4"
+                        class="w-full border p-2 rounded"
+                        placeholder="Enter your details (e.g., Name: John Doe, Phone: +919876543210, other info)"
+                    ></textarea>
+                    <button
+                        type="submit"
+                        class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Generate Message
+                    </button>
+                </form>
+            </div>
+            <!-- Resume Processing Card -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Upload Resume</h2>
+                <p class="mb-4">Upload your resume (PDF) to apply for a position.</p>
+                <button
+                    onclick="toggleForm('pdf-form')"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Process Resume
+                </button>
+                <form id="pdf-form" method="post" enctype="multipart/form-data" class="space-y-4 mt-4 hidden">
+                    <input
+                        type="file"
+                        name="resume"
+                        accept="application/pdf"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    <button
+                        type="submit"
+                        class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Generate Message
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if error %}
+        <div class="mt-4 p-3 bg-red-100 text-red-700 rounded">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if message %}
+        <div class="mt-6 flex flex-col md:flex-row gap-6">
+            <!-- Message Section -->
+            <div class="w-full md:w-1/2">
+                <h2 class="text-lg font-semibold mb-2">Generated Message:</h2>
+                <textarea
+                    rows="6"
+                    class="w-full border p-2 rounded"
+                    readonly
+                >{{ message }}</textarea>
+                <a
+                    href="{{ contact_link }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-block mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                    {% if whatsapp_number %}Send on WhatsApp{% else %}Send via Email{% endif %}
+                </a>
+            </div>
+            <!-- PDF Preview Section -->
+            {% if pdf_path and source == 'pdf' %}
+            <div class="w-full md:w-1/2">
+                <h2 class="text-lg font-semibold mb-2">Uploaded Resume:</h2>
+                <object
+                    data="{{ pdf_path }}"
+                    type="application/pdf"
+                    class="w-full h-96 border rounded"
+                >
+                    <p>PDF preview not available. <a href="{{ pdf_path }}">Download PDF</a></p>
+                </object>
+                <button
+                    onclick="fetch('/cleanup?file={{ pdf_path | urlencode }}').then(() => location.reload())"
+                    class="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                    Remove PDF
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>
