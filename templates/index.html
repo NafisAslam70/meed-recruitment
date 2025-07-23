@@ -16,32 +16,80 @@
 </head>
 <body class="bg-gray-100">
     <main class="p-6 max-w-7xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6 text-center">Teacher Recruitment</h1>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-center">Teacher Recruitment</h1>
+            <div>
+                <a
+                    href="{{ url_for('find_teachers') }}"
+                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-2"
+                >
+                    Find Teachers
+                </a>
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                    Logout
+                </a>
+            </div>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- General Message Card -->
+            <!-- Vacancies Available Card -->
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-lg font-semibold mb-4">Vacancies Available</h2>
-                <p class="mb-4">We have openings at MEED Public School, Gumani, Pakur. Fooding and lodging are free. Please send us your details!</p>
+                <p class="mb-4">We have openings at MEED Public School, Gumani, Pakur. Fooding and lodging are free. Please submit your details!</p>
                 <button
                     onclick="toggleForm('text-form')"
                     class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                     Submit Details
                 </button>
-                <form id="text-form" method="post" class="space-y-4 mt-4 hidden">
-                    <textarea
-                        name="details"
-                        rows="4"
-                        class="w-full border p-2 rounded"
-                        placeholder="Enter your details (e.g., Name: John Doe, Phone: +919876543210, other info)"
-                    ></textarea>
-                    <button
-                        type="submit"
-                        class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        Generate Message
-                    </button>
+                <form id="text-form" method="post" class="space-y-4 mt-4 hidden grid grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            id="name"
+                            value="{{ name }}"
+                            class="w-full border p-2 rounded mt-1"
+                            placeholder="Enter name"
+                            required
+                        />
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            value="{{ email }}"
+                            class="w-full border p-2 rounded mt-1"
+                            placeholder="Enter email"
+                            required
+                        />
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            id="phone"
+                            value="{{ phone }}"
+                            class="w-full border p-2 rounded mt-1"
+                            placeholder="Enter phone (e.g., +919876543210)"
+                            required
+                        />
+                    </div>
+                    <div class="col-span-2">
+                        <button
+                            type="submit"
+                            class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                            Generate Message
+                        </button>
+                    </div>
                 </form>
             </div>
             <!-- Resume Processing Card -->
@@ -68,6 +116,25 @@
                         Generate Message
                     </button>
                 </form>
+                {% if pdf_path and source == 'pdf' and (fetched_name or fetched_email or fetched_phone) %}
+                <div class="mt-4 p-6 bg-gray-50 rounded-lg shadow-md">
+                    <h3 class="text-md font-semibold mb-2">Fetched Resume Details</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <label class="block text-sm font-medium text-gray-700">Name</label>
+                            <p class="border p-2 rounded mt-1">{{ fetched_name or 'N/A' }}</p>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <p class="border p-2 rounded mt-1">{{ fetched_email or 'N/A' }}</p>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="block text-sm font-medium text-gray-700">Phone</label>
+                            <p class="border p-2 rounded mt-1">{{ fetched_phone or 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
 
