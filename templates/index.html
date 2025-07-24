@@ -7,16 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/styles.css">
     <script>
-        function toggleModal(modalId) {
-            document.getElementById('text-modal').classList.add('hidden');
-            document.getElementById('pdf-modal').classList.add('hidden');
-            document.getElementById(modalId).classList.remove('hidden');
+        function toggleForm(formId) {
+            document.getElementById('text-form').classList.add('hidden');
+            document.getElementById('pdf-form').classList.add('hidden');
+            document.getElementById(formId).classList.remove('hidden');
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-            document.getElementById('pdf-form')?.reset();
-            document.getElementById('fetched-details')?.classList.add('hidden');
+        function confirmMessage() {
+            document.getElementById('pdf-confirm-form').submit();
+        }
+
+        function cancelProcess() {
+            document.getElementById('pdf-form').reset();
+            document.getElementById('fetched-details').classList.add('hidden');
+            document.getElementById('message-section').classList.add('hidden');
+            document.getElementById('pdf-preview-section').classList.add('hidden');
         }
 
         function showSpinner() {
@@ -30,75 +35,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const pdfForm = document.getElementById('pdf-form');
             if (pdfForm) {
-                pdfForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    // Hide file input form, upload resume card, and PDF modal
-                    document.getElementById('pdf-form-container').classList.add('hidden');
-                    document.getElementById('upload-resume-card').classList.add('hidden');
-                    closeModal('pdf-modal'); // Explicitly close PDF modal
+                pdfForm.addEventListener('submit', () => {
                     showSpinner();
-                    const formData = new FormData(pdfForm);
-                    try {
-                        const response = await fetch('/', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        if (response.ok) {
-                            const html = await response.text();
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            // Update main content with confirmation and resume view
-                            const newMainContent = doc.querySelector('main');
-                            if (newMainContent) {
-                                document.querySelector('main').innerHTML = newMainContent.innerHTML;
-                            } else {
-                                throw new Error('Main content not found in response');
-                            }
-                            hideSpinner();
-                        } else {
-                            throw new Error('Server responded with status: ' + response.status);
-                        }
-                    } catch (error) {
-                        hideSpinner();
-                        document.getElementById('pdf-form-container').classList.remove('hidden');
-                        document.getElementById('upload-resume-card').classList.remove('hidden');
-                        console.error('Upload error:', error);
-                        alert('Failed to process PDF. Please check your file and try again.');
-                    }
-                });
-            }
-
-            const confirmForm = document.getElementById('pdf-confirm-form');
-            if (confirmForm) {
-                confirmForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    showSpinner();
-                    const formData = new FormData(confirmForm);
-                    try {
-                        const response = await fetch('/', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        if (response.ok) {
-                            const html = await response.text();
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            // Update main content to show both message and resume view
-                            const newMainContent = doc.querySelector('main');
-                            if (newMainContent) {
-                                document.querySelector('main').innerHTML = newMainContent.innerHTML;
-                            } else {
-                                throw new Error('Main content not found in response');
-                            }
-                            hideSpinner();
-                        } else {
-                            throw new Error('Server responded with status: ' + response.status);
-                        }
-                    } catch (error) {
-                        hideSpinner();
-                        console.error('Confirm error:', error);
-                        alert('Failed to confirm details. Please try again.');
-                    }
                 });
             }
         });
@@ -106,7 +44,7 @@
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen flex flex-col">
     <!-- Loading Spinner Modal -->
-    <div id="loading-spinner" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-60 hidden">
+    <div id="loading-spinner" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
             <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600"></div>
             <p class="mt-4 text-gray-700 font-semibold">Processing, please wait...</p>
@@ -131,21 +69,25 @@
     </nav>
 
     <main class="p-6 max-w-7xl mx-auto flex-grow">
-        {% if pdf_path and source == 'pdf' and (fetched_name or fetched_email or fetched_phone) %}
-        <!-- Confirmation and Resume View Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 min-h-[calc(100vh-12rem)]">
-            <!-- Confirmation Card -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Vacancies Available Card -->
             <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Details</h2>
-                <p class="mb-4 text-gray-600">Review and edit the extracted details from your resume.</p>
-                <form id="pdf-confirm-form" method="post" class="space-y-4 grid grid-cols-2 gap-4">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Vacancies Available</h2>
+                <p class="mb-4 text-gray-600">Join MEED Public School in Gumani, Pakur! We offer free food and lodging for our staff. Submit your details to apply for exciting teaching and administrative roles.</p>
+                <button
+                    onclick="toggleForm('text-form')"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+                >
+                    Submit Details
+                </button>
+                <form id="text-form" method="post" class="space-y-4 mt-4 hidden grid grid-cols-2 gap-4">
                     <div class="flex flex-col">
                         <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                         <input
                             type="text"
                             name="name"
                             id="name"
-                            value="{{ fetched_name or '' }}"
+                            value="{{ name }}"
                             class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                             placeholder="Enter name"
                             required
@@ -157,7 +99,7 @@
                             type="email"
                             name="email"
                             id="email"
-                            value="{{ fetched_email or '' }}"
+                            value="{{ email }}"
                             class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                             placeholder="Enter email"
                             required
@@ -169,75 +111,142 @@
                             type="tel"
                             name="phone"
                             id="phone"
-                            value="{{ fetched_phone or '' }}"
+                            value="{{ phone }}"
                             class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                             placeholder="Enter phone (e.g., +919876543210)"
                             required
                         />
                     </div>
-                    <div class="col-span-2 flex space-x-4">
+                    <div class="col-span-2">
                         <button
                             type="submit"
-                            class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium"
+                            class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
                         >
-                            Confirm
-                        </button>
-                        <button
-                            type="button"
-                            onclick="window.location.reload()"
-                            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300 font-medium"
-                        >
-                            Cancel
+                            Generate Message
                         </button>
                     </div>
-                    <input type="hidden" name="pdf_path" value="{{ pdf_path }}">
                 </form>
             </div>
 
-            <!-- Resume View Card -->
-            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card" id="pdf-preview-section">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Uploaded Resume</h2>
-                <object
-                    data="{{ pdf_path }}"
-                    type="application/pdf"
-                    class="w-full h-[calc(100vh-16rem)] border border-gray-300 rounded-lg shadow-inner"
-                >
-                    <p class="text-gray-600">PDF preview not available. <a href="{{ pdf_path }}" class="text-blue-600 hover:underline">Download PDF</a></p>
-                </object>
+            <!-- Resume Processing Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Upload Resume</h2>
+                <p class="mb-4 text-gray-600">Upload your resume (PDF) to automatically extract your details and apply for a position at MEED Public School.</p>
                 <button
-                    onclick="fetch('/cleanup?file={{ pdf_path | urlencode }}').then(() => location.reload())"
-                    class="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300 font-medium"
+                    onclick="toggleForm('pdf-form')"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
                 >
-                    Remove PDF
+                    Process Resume
                 </button>
+                <form id="pdf-form" method="post" enctype="multipart/form-data" class="space-y-4 mt-4 hidden">
+                    <input
+                        type="file"
+                        name="resume"
+                        accept="application/pdf"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 transition-colors duration-200"
+                    />
+                    <button
+                        type="submit"
+                        class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+                    >
+                        Generate Message
+                    </button>
+                </form>
+                {% if pdf_path and source == 'pdf' and (fetched_name or fetched_email or fetched_phone) %}
+                <div id="fetched-details" class="mt-6 p-6 bg-gray-50 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Fetched Resume Details</h3>
+                    <form id="pdf-confirm-form" method="post" class="space-y-4 grid grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                id="name"
+                                value="{{ fetched_name or '' }}"
+                                class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                placeholder="Enter name"
+                                required
+                            />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value="{{ fetched_email or '' }}"
+                                class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                placeholder="Enter email"
+                                required
+                            />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                            <input
+                                type="tel"
+                                name="phone"
+                                id="phone"
+                                value="{{ fetched_phone or '' }}"
+                                class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                placeholder="Enter phone (e.g., +919876543210)"
+                                required
+                            />
+                        </div>
+                        <div class="col-span-2 flex space-x-4">
+                            <button
+                                type="button"
+                                onclick="confirmMessage()"
+                                class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium"
+                            >
+                                Confirm for Message Generation
+                            </button>
+                            <button
+                                type="button"
+                                onclick="cancelProcess()"
+                                class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300 font-medium"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </div>
-        {% elif message %}
-        <!-- Message and Resume View -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 min-h-[calc(100vh-12rem)]">
-            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card">
+
+        {% if error %}
+        <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg shadow-md animate-pulse" id="error-section">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if message %}
+        <div class="mt-8 flex flex-col md:flex-row gap-6" id="message-section">
+            <!-- Message Section -->
+            <div class="w-full md:w-1/2 bg-white p-6 rounded-xl shadow-lg">
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Generated Message</h2>
                 <textarea
                     rows="8"
-                    class="w-full border border-gray-300 p-3 rounded-lg bg-gray-50 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 mb-4"
+                    class="w-full border border-gray-300 p-3 rounded-lg bg-gray-50 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                     readonly
                 >{{ message }}</textarea>
                 <a
                     href="{{ contact_link }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="inline-block mb-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium"
+                    class="inline-block mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium"
                 >
                     {% if whatsapp_number %}Send on WhatsApp{% else %}Send via Email{% endif %}
                 </a>
             </div>
-            {% if pdf_path %}
-            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card">
-                <h3 class="text-lg font-semibold mb-2 text-gray-800">Uploaded Resume</h3>
+            <!-- PDF Preview Section -->
+            {% if pdf_path and source == 'pdf' %}
+            <div class="w-full md:w-1/2 bg-white p-6 rounded-xl shadow-lg" id="pdf-preview-section">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Uploaded Resume</h2>
                 <object
                     data="{{ pdf_path }}"
                     type="application/pdf"
-                    class="w-full h-[calc(100vh-16rem)] border border-gray-300 rounded-lg shadow-inner"
+                    class="w-full h-96 border border-gray-300 rounded-lg shadow-inner"
                 >
                     <p class="text-gray-600">PDF preview not available. <a href="{{ pdf_path }}" class="text-blue-600 hover:underline">Download PDF</a></p>
                 </object>
@@ -249,145 +258,6 @@
                 </button>
             </div>
             {% endif %}
-        </div>
-        {% else %}
-        <!-- Initial Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- Submit Details Card -->
-            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Submit Details</h2>
-                <p class="mb-4 text-gray-600">Enter your details manually to apply for teaching or administrative roles at MEED Public School, Gumani, Pakur.</p>
-                <button
-                    onclick="toggleModal('text-modal')"
-                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
-                >
-                    Enter Details
-                </button>
-            </div>
-
-            <!-- Upload Resume Card -->
-            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 card" id="upload-resume-card">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Upload Resume</h2>
-                <p class="mb-4 text-gray-600">Upload your resume (PDF) to automatically extract details and apply for a position at MEED Public School.</p>
-                <button
-                    onclick="toggleModal('pdf-modal')"
-                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
-                >
-                    Upload Resume
-                </button>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Text Input Modal -->
-        <div id="text-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full modal">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Enter Your Details</h3>
-                    <button onclick="closeModal('text-modal')" class="text-gray-600 hover:text-gray-800">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <form method="post" class="space-y-4 grid grid-cols-2 gap-4">
-                    <div class="flex flex-col">
-                        <label for="text-name" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            id="text-name"
-                            value="{{ name }}"
-                            class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                            placeholder="Enter name"
-                            required
-                        />
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="text-email" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            id="text-email"
-                            value="{{ email }}"
-                            class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                            placeholder="Enter email"
-                            required
-                        />
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="text-phone" class="block text-sm font-medium text-gray-700">Phone</label>
-                        <input
-                            type="tel"
-                            name="phone"
-                            id="text-phone"
-                            value="{{ phone }}"
-                            class="w-full border border-gray-300 p-2 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                            placeholder="Enter phone (e.g., +919876543210)"
-                            required
-                        />
-                    </div>
-                    <div class="col-span-2 flex space-x-4">
-                        <button
-                            type="submit"
-                            class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
-                        >
-                            Generate Message
-                        </button>
-                        <button
-                            type="button"
-                            onclick="closeModal('text-modal')"
-                            class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-300 font-medium"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- PDF Upload Modal -->
-        <div id="pdf-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full modal">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Upload Resume</h3>
-                    <button onclick="closeModal('pdf-modal')" class="text-gray-600 hover:text-gray-800">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div id="pdf-form-container">
-                    <form id="pdf-form" method="post" enctype="multipart/form-data" class="space-y-4">
-                        <input
-                            type="file"
-                            name="resume"
-                            accept="application/pdf"
-                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 transition-colors duration-200"
-                        />
-                        <div class="flex space-x-4">
-                            <button
-                                type="submit"
-                                class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
-                            >
-                                Generate Message
-                            </button>
-                            <button
-                                type="button"
-                                onclick="closeModal('pdf-modal')"
-                                class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-300 font-medium"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        {% if error %}
-        <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg shadow-md animate-pulse" id="error-section">
-            {{ error }}
         </div>
         {% endif %}
     </main>

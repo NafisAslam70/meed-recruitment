@@ -10924,3 +10924,207 @@
 2025-07-24 08:43:05,086 INFO: Normalized phone number: +918158093395
 2025-07-24 08:43:05,086 INFO: Generated WhatsApp link for phone: +918158093395
 2025-07-24 08:43:05,089 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:05] "POST / HTTP/1.1" 200 -
+2025-07-24 08:43:36,766 INFO: Scraped 0 candidates from Quikr
+2025-07-24 08:43:36,769 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:36] "GET /find-teachers HTTP/1.1" 200 -
+2025-07-24 08:43:36,802 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:36] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:43:37,874 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:37] "GET / HTTP/1.1" 200 -
+2025-07-24 08:43:37,903 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:37] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:43:43,597 WARNING: Invalid or missing phone number: 0172641454
+2025-07-24 08:43:43,599 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:43] "POST / HTTP/1.1" 200 -
+2025-07-24 08:43:43,611 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:43] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:43:56,536 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:56] "GET / HTTP/1.1" 200 -
+2025-07-24 08:43:56,553 INFO: 127.0.0.1 - - [24/Jul/2025 08:43:56] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:44:13,998 INFO: Normalized phone number: +60172641454
+2025-07-24 08:44:14,000 INFO: Generated WhatsApp link for phone: +60172641454
+2025-07-24 08:44:14,001 INFO: 127.0.0.1 - - [24/Jul/2025 08:44:14] "POST / HTTP/1.1" 200 -
+2025-07-24 08:44:14,025 INFO: 127.0.0.1 - - [24/Jul/2025 08:44:14] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:53:17,132 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:17] "GET /login HTTP/1.1" 200 -
+2025-07-24 08:53:17,190 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:17] "GET /static/styles.css HTTP/1.1" 200 -
+2025-07-24 08:53:17,380 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:17] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-24 08:53:25,219 INFO: User logged in: admin
+2025-07-24 08:53:25,222 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:25] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-07-24 08:53:25,236 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:25] "GET / HTTP/1.1" 200 -
+2025-07-24 08:53:25,285 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:25] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:53:39,423 INFO: Saved PDF: Resume_Palmu_Dolma_Lama.pdf
+2025-07-24 08:53:41,656 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:53:41,739 INFO: Extracted name using spaCy: +8158093395
+2025-07-24 08:53:41,740 INFO: Extracted email: palmudolma09@icloud.com
+2025-07-24 08:53:41,740 INFO: Normalized phone number: +918158093395
+2025-07-24 08:53:41,740 INFO: Extracted phone: +918158093395
+2025-07-24 08:53:41,742 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:41] "POST / HTTP/1.1" 200 -
+2025-07-24 08:53:41,761 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:41] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:53:41,780 INFO: Serving file: Resume_Palmu_Dolma_Lama.pdf
+2025-07-24 08:53:41,781 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:41] "GET /Uploads/Resume_Palmu_Dolma_Lama.pdf HTTP/1.1" 200 -
+2025-07-24 08:53:54,232 INFO: Normalized phone number: +918158093395
+2025-07-24 08:53:54,234 INFO: Generated WhatsApp link for phone: +918158093395
+2025-07-24 08:53:54,237 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:54] "POST / HTTP/1.1" 200 -
+2025-07-24 08:53:54,279 INFO: 10.212.134.44 - - [24/Jul/2025 08:53:54] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:54:19,092 INFO: Saved PDF: Resume_Dichen_Tamang.pdf
+2025-07-24 08:54:20,576 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:54:20,611 INFO: Extracted name using spaCy: Joseph College
+2025-07-24 08:54:20,611 INFO: Extracted email: dichent51@gmail.com
+2025-07-24 08:54:20,612 INFO: Normalized phone number: +919064024635
+2025-07-24 08:54:20,612 INFO: Extracted phone: +919064024635
+2025-07-24 08:54:20,614 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:20] "POST / HTTP/1.1" 200 -
+2025-07-24 08:54:20,632 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:20] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:54:20,644 INFO: Serving file: Resume_Dichen_Tamang.pdf
+2025-07-24 08:54:20,645 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:20] "GET /Uploads/Resume_Dichen_Tamang.pdf HTTP/1.1" 200 -
+2025-07-24 08:54:47,895 INFO: Saved PDF: Resume_Dichen_Tamang.pdf
+2025-07-24 08:54:49,285 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:54:49,321 INFO: Extracted name using spaCy: Joseph College
+2025-07-24 08:54:49,322 INFO: Extracted email: dichent51@gmail.com
+2025-07-24 08:54:49,322 INFO: Normalized phone number: +919064024635
+2025-07-24 08:54:49,322 INFO: Extracted phone: +919064024635
+2025-07-24 08:54:49,328 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:49] "POST / HTTP/1.1" 200 -
+2025-07-24 08:54:49,354 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:49] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:54:49,363 INFO: Serving file: Resume_Dichen_Tamang.pdf
+2025-07-24 08:54:49,364 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:49] "GET /Uploads/Resume_Dichen_Tamang.pdf HTTP/1.1" 200 -
+2025-07-24 08:54:56,175 INFO: Normalized phone number: +919064024635
+2025-07-24 08:54:56,175 INFO: Generated WhatsApp link for phone: +919064024635
+2025-07-24 08:54:56,177 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:56] "POST / HTTP/1.1" 200 -
+2025-07-24 08:54:56,185 INFO: Normalized phone number: +919064024635
+2025-07-24 08:54:56,185 INFO: Generated WhatsApp link for phone: +919064024635
+2025-07-24 08:54:56,187 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:56] "POST / HTTP/1.1" 200 -
+2025-07-24 08:54:56,225 INFO: 10.212.134.44 - - [24/Jul/2025 08:54:56] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:55:26,759 INFO: Normalized phone number: +919064024635
+2025-07-24 08:55:26,760 INFO: Generated WhatsApp link for phone: +919064024635
+2025-07-24 08:55:26,765 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:26] "POST / HTTP/1.1" 200 -
+2025-07-24 08:55:26,793 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:26] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:55:36,082 INFO: Saved PDF: Resume_Dichen_Tamang.pdf
+2025-07-24 08:55:37,618 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:55:37,652 INFO: Extracted name using spaCy: Joseph College
+2025-07-24 08:55:37,653 INFO: Extracted email: dichent51@gmail.com
+2025-07-24 08:55:37,653 INFO: Normalized phone number: +919064024635
+2025-07-24 08:55:37,653 INFO: Extracted phone: +919064024635
+2025-07-24 08:55:37,656 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:37] "POST / HTTP/1.1" 200 -
+2025-07-24 08:55:37,675 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:37] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:55:37,684 INFO: Serving file: Resume_Dichen_Tamang.pdf
+2025-07-24 08:55:37,685 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:37] "GET /Uploads/Resume_Dichen_Tamang.pdf HTTP/1.1" 200 -
+2025-07-24 08:55:57,293 INFO: Saved PDF: Resume_Dichen_Tamang.pdf
+2025-07-24 08:55:58,670 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:55:58,704 INFO: Extracted name using spaCy: Joseph College
+2025-07-24 08:55:58,704 INFO: Extracted email: dichent51@gmail.com
+2025-07-24 08:55:58,705 INFO: Normalized phone number: +919064024635
+2025-07-24 08:55:58,705 INFO: Extracted phone: +919064024635
+2025-07-24 08:55:58,707 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:58] "POST / HTTP/1.1" 200 -
+2025-07-24 08:55:58,729 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:58] "GET /static/styles.css HTTP/1.1" 200 -
+2025-07-24 08:55:58,741 INFO: Serving file: Resume_Dichen_Tamang.pdf
+2025-07-24 08:55:58,742 INFO: 10.212.134.44 - - [24/Jul/2025 08:55:58] "GET /Uploads/Resume_Dichen_Tamang.pdf HTTP/1.1" 200 -
+2025-07-24 08:56:00,943 INFO: Normalized phone number: +919064024635
+2025-07-24 08:56:00,943 INFO: Generated WhatsApp link for phone: +919064024635
+2025-07-24 08:56:00,945 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:00] "POST / HTTP/1.1" 200 -
+2025-07-24 08:56:00,969 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:00] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:56:27,501 INFO: Saved PDF: Resume_Anuradha_Chhetri.pdf
+2025-07-24 08:56:28,981 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:56:29,053 INFO: Extracted name using spaCy: Anuradha Chhetri Graduate
+2025-07-24 08:56:29,053 INFO: Extracted email: anu1998chhetri@gmail.com
+2025-07-24 08:56:29,053 INFO: Normalized phone number: +919547629975
+2025-07-24 08:56:29,053 INFO: Extracted phone: +919547629975
+2025-07-24 08:56:29,056 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:29] "POST / HTTP/1.1" 200 -
+2025-07-24 08:56:29,070 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:29] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:56:29,084 INFO: Serving file: Resume_Anuradha_Chhetri.pdf
+2025-07-24 08:56:29,085 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:29] "GET /Uploads/Resume_Anuradha_Chhetri.pdf HTTP/1.1" 200 -
+2025-07-24 08:56:36,905 INFO: Normalized phone number: +919547629975
+2025-07-24 08:56:36,906 INFO: Generated WhatsApp link for phone: +919547629975
+2025-07-24 08:56:36,908 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:36] "POST / HTTP/1.1" 200 -
+2025-07-24 08:56:36,947 INFO: 10.212.134.44 - - [24/Jul/2025 08:56:36] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:57:27,339 INFO: Saved PDF: Resume_Barsha_Roy.pdf
+2025-07-24 08:57:28,939 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:57:29,003 INFO: Extracted name using spaCy: Cita Degree
+2025-07-24 08:57:29,003 INFO: Extracted email: barsharoy151193@gmail.com
+2025-07-24 08:57:29,003 INFO: Normalized phone number: +918759884301
+2025-07-24 08:57:29,003 INFO: Extracted phone: +918759884301
+2025-07-24 08:57:29,006 INFO: 10.212.134.44 - - [24/Jul/2025 08:57:29] "POST / HTTP/1.1" 200 -
+2025-07-24 08:57:29,032 INFO: 10.212.134.44 - - [24/Jul/2025 08:57:29] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:57:29,043 INFO: Serving file: Resume_Barsha_Roy.pdf
+2025-07-24 08:57:29,050 INFO: 10.212.134.44 - - [24/Jul/2025 08:57:29] "GET /Uploads/Resume_Barsha_Roy.pdf HTTP/1.1" 200 -
+2025-07-24 08:59:35,839 INFO: Saved PDF: Resume_Barsha_Roy.pdf
+2025-07-24 08:59:37,497 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:59:37,554 INFO: Extracted name using spaCy: Cita Degree
+2025-07-24 08:59:37,554 INFO: Extracted email: barsharoy151193@gmail.com
+2025-07-24 08:59:37,555 INFO: Normalized phone number: +918759884301
+2025-07-24 08:59:37,555 INFO: Extracted phone: +918759884301
+2025-07-24 08:59:37,585 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:37] "[35m[1mPOST / HTTP/1.1[0m" 500 -
+2025-07-24 08:59:37,628 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:37] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-07-24 08:59:37,631 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:37] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-07-24 08:59:37,759 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:37] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-07-24 08:59:57,073 INFO: Saved PDF: Resume_Barsha_Roy.pdf
+2025-07-24 08:59:58,648 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 08:59:58,700 INFO: Extracted name using spaCy: Cita Degree
+2025-07-24 08:59:58,700 INFO: Extracted email: barsharoy151193@gmail.com
+2025-07-24 08:59:58,700 INFO: Normalized phone number: +918759884301
+2025-07-24 08:59:58,701 INFO: Extracted phone: +918759884301
+2025-07-24 08:59:58,709 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:58] "POST / HTTP/1.1" 200 -
+2025-07-24 08:59:58,730 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:58] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 08:59:58,759 INFO: Serving file: Resume_Barsha_Roy.pdf
+2025-07-24 08:59:58,760 INFO: 10.212.134.44 - - [24/Jul/2025 08:59:58] "GET /Uploads/Resume_Barsha_Roy.pdf HTTP/1.1" 200 -
+2025-07-24 09:01:23,299 INFO: Saved PDF: Resume_Barsha_Roy.pdf
+2025-07-24 09:01:24,913 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 09:01:24,964 INFO: Extracted name using spaCy: Cita Degree
+2025-07-24 09:01:24,965 INFO: Extracted email: barsharoy151193@gmail.com
+2025-07-24 09:01:24,965 INFO: Normalized phone number: +918759884301
+2025-07-24 09:01:24,965 INFO: Extracted phone: +918759884301
+2025-07-24 09:01:24,972 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:24] "[35m[1mPOST / HTTP/1.1[0m" 500 -
+2025-07-24 09:01:25,005 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:25] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-07-24 09:01:25,006 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:25] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-07-24 09:01:25,104 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:25] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-07-24 09:01:50,236 INFO: Saved PDF: Resume_Barsha_Roy.pdf
+2025-07-24 09:01:51,835 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 09:01:51,890 INFO: Extracted name using spaCy: Cita Degree
+2025-07-24 09:01:51,890 INFO: Extracted email: barsharoy151193@gmail.com
+2025-07-24 09:01:51,891 INFO: Normalized phone number: +918759884301
+2025-07-24 09:01:51,891 INFO: Extracted phone: +918759884301
+2025-07-24 09:01:51,899 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:51] "POST / HTTP/1.1" 200 -
+2025-07-24 09:01:51,916 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:51] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:01:51,941 INFO: Serving file: Resume_Barsha_Roy.pdf
+2025-07-24 09:01:51,942 INFO: 10.212.134.44 - - [24/Jul/2025 09:01:51] "GET /Uploads/Resume_Barsha_Roy.pdf HTTP/1.1" 200 -
+2025-07-24 09:02:32,504 INFO: Saved PDF: Resume_Anuradha_Chhetri.pdf
+2025-07-24 09:02:34,065 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 09:02:34,105 INFO: Extracted name using spaCy: Anuradha Chhetri Graduate
+2025-07-24 09:02:34,105 INFO: Extracted email: anu1998chhetri@gmail.com
+2025-07-24 09:02:34,106 INFO: Normalized phone number: +919547629975
+2025-07-24 09:02:34,106 INFO: Extracted phone: +919547629975
+2025-07-24 09:02:34,108 INFO: 10.212.134.44 - - [24/Jul/2025 09:02:34] "POST / HTTP/1.1" 200 -
+2025-07-24 09:02:34,143 INFO: 10.212.134.44 - - [24/Jul/2025 09:02:34] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:02:34,192 INFO: Serving file: Resume_Anuradha_Chhetri.pdf
+2025-07-24 09:02:34,207 INFO: 10.212.134.44 - - [24/Jul/2025 09:02:34] "GET /Uploads/Resume_Anuradha_Chhetri.pdf HTTP/1.1" 200 -
+2025-07-24 09:02:44,642 INFO: Normalized phone number: +919547629975
+2025-07-24 09:02:44,643 INFO: Generated WhatsApp link for phone: +919547629975
+2025-07-24 09:02:44,650 INFO: 10.212.134.44 - - [24/Jul/2025 09:02:44] "POST / HTTP/1.1" 200 -
+2025-07-24 09:02:44,672 INFO: 10.212.134.44 - - [24/Jul/2025 09:02:44] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:04:24,135 INFO: Normalized phone number: +919547629975
+2025-07-24 09:04:24,136 INFO: Generated WhatsApp link for phone: +919547629975
+2025-07-24 09:04:24,145 INFO: 10.212.134.44 - - [24/Jul/2025 09:04:24] "POST / HTTP/1.1" 200 -
+2025-07-24 09:04:24,181 INFO: 10.212.134.44 - - [24/Jul/2025 09:04:24] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:04:29,036 INFO: 10.212.134.44 - - [24/Jul/2025 09:04:29] "GET / HTTP/1.1" 200 -
+2025-07-24 09:04:29,085 INFO: 10.212.134.44 - - [24/Jul/2025 09:04:29] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:05:58,926 INFO: Saved PDF: Resume_Palmu_Dolma_Lama.pdf
+2025-07-24 09:06:01,001 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 09:06:01,050 INFO: Extracted name using spaCy: +8158093395
+2025-07-24 09:06:01,051 INFO: Extracted email: palmudolma09@icloud.com
+2025-07-24 09:06:01,051 INFO: Normalized phone number: +918158093395
+2025-07-24 09:06:01,051 INFO: Extracted phone: +918158093395
+2025-07-24 09:06:01,053 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:01] "POST / HTTP/1.1" 200 -
+2025-07-24 09:06:01,067 INFO: Serving file: Resume_Palmu_Dolma_Lama.pdf
+2025-07-24 09:06:01,068 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:01] "GET /Uploads/Resume_Palmu_Dolma_Lama.pdf HTTP/1.1" 200 -
+2025-07-24 09:06:04,287 INFO: Normalized phone number: +918158093395
+2025-07-24 09:06:04,287 INFO: Generated WhatsApp link for phone: +918158093395
+2025-07-24 09:06:04,289 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:04] "POST / HTTP/1.1" 200 -
+2025-07-24 09:06:10,013 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:10] "GET / HTTP/1.1" 200 -
+2025-07-24 09:06:10,052 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:10] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:06:28,918 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:28] "GET / HTTP/1.1" 200 -
+2025-07-24 09:06:28,939 INFO: 10.212.134.44 - - [24/Jul/2025 09:06:28] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:07:14,992 INFO: Saved PDF: Resume_Palmu_Dolma_Lama.pdf
+2025-07-24 09:07:17,122 INFO: Extracted text from scanned PDF using OCR
+2025-07-24 09:07:17,169 INFO: Extracted name using spaCy: +8158093395
+2025-07-24 09:07:17,169 INFO: Extracted email: palmudolma09@icloud.com
+2025-07-24 09:07:17,169 INFO: Normalized phone number: +918158093395
+2025-07-24 09:07:17,169 INFO: Extracted phone: +918158093395
+2025-07-24 09:07:17,172 INFO: 10.212.134.44 - - [24/Jul/2025 09:07:17] "POST / HTTP/1.1" 200 -
+2025-07-24 09:07:17,203 INFO: 10.212.134.44 - - [24/Jul/2025 09:07:17] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-24 09:07:17,289 INFO: Serving file: Resume_Palmu_Dolma_Lama.pdf
+2025-07-24 09:07:17,336 INFO: 10.212.134.44 - - [24/Jul/2025 09:07:17] "GET /Uploads/Resume_Palmu_Dolma_Lama.pdf HTTP/1.1" 200 -
+2025-07-24 09:07:20,313 INFO: Normalized phone number: +918158093395
+2025-07-24 09:07:20,314 INFO: Generated WhatsApp link for phone: +918158093395
+2025-07-24 09:07:20,316 INFO: 10.212.134.44 - - [24/Jul/2025 09:07:20] "POST / HTTP/1.1" 200 -
+2025-07-24 09:07:20,337 INFO: 10.212.134.44 - - [24/Jul/2025 09:07:20] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
